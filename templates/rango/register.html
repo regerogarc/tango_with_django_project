@@ -1,0 +1,30 @@
+{% extends 'rango/base.html' %}
+{% load staticfiles %}
+
+{% block title_block %}
+    Register
+{% endblock title_block %}
+
+{% block body_block %}
+    <h1>Register for Rango</h1>
+    {% if registered %}
+        Rango says: <strong>thank you for registering!</strong>
+        <a href="{% url 'rango:index' %}">Return to the homepage.</a><br />
+    {% else %}
+        Rango says: <strong>register here!</strong><br />
+        
+        <!--enctype is used as if the user tries to uplaod a picture, the response from the form may contain binary data
+        This is different from text data from the user's text inputs so the response will have to broken into multiple parts-->
+        <form id="user_form" method="post" action="{% url 'rango:register' %}" enctype="multipart/form-data">
+            <!-- CSRF Token for security -->
+            {% csrf_token %}
+
+            <!-- Display each form. as_p wraps the element in <p> HTML tags -->
+            {{ user_form.as_p }} 
+            {{ profile_form.as_p }}
+
+            <!-- Provide a button to click submit -->
+            <input type="submit" name="submit" value="Register" />
+        </form>
+    {% endif %}
+{% endblock body_block %}
