@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from rango.models import Category, Page
 from rango.forms import CategoryForm, PageForm
 from django.shortcuts import redirect
+from django.urls import reverse
 
 # Create your views here.
 
@@ -61,7 +62,7 @@ def add_category(request):
             print("Category Created!: ", cat, cat.slug)
 
             # Redirect user back to index
-            return redirect('/rango/')
+            return redirect(reverse('index'))
         else:
             # The form contained error. Just print them to terminal
             print(form.errors)
@@ -75,7 +76,7 @@ def add_page(request, category_name_slug):
         category = None
 
     if category is None:
-        return redirect('/rango/')
+        return redirect(reverse('index'))
     
     form = PageForm()
 
@@ -86,11 +87,12 @@ def add_page(request, category_name_slug):
             if category:
                 page = form.save(commit=False)
                 page.category = category
+                page.views = 0
                 page.save()
                 
                 print("Page Created!: ", page)
 
-                return redirect("/rango/")
+                return redirect(reverse('rango:show_category', kwargs={'category_name_slug':category_name_slug}))
         else:
             print(form.errors)
     return render(request, 'rango/add_page.html', {'form':form, 'category':category})
